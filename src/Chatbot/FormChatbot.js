@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import ChatBot, { Loading } from "react-simple-chatbot";
+import UserRegister from "./UserRegister";
 import { ThemeProvider } from "styled-components";
 import PropTypes from "prop-types";
 import Post from "./Post";
@@ -11,7 +12,6 @@ class DBPedia extends Component {
     this.state = {
       loading: true,
       result: "",
-      trigger: false,
     };
 
     this.triggetNext = this.triggetNext.bind(this);
@@ -59,7 +59,7 @@ class DBPedia extends Component {
   }
 
   render() {
-    const { trigger, loading, result } = this.state;
+    const {  loading, result } = this.state;
 
     return (
       <div className="dbpedia">
@@ -71,9 +71,6 @@ class DBPedia extends Component {
               marginTop: 20,
             }}
           >
-            {!trigger && (
-              <button onClick={() => this.triggetNext()}>Search Again</button>
-            )}
           </div>
         )}
       </div>
@@ -161,7 +158,14 @@ const config = {
   height: "400px",
   floating: true,
 };
-
+let postData;
+function passToPost(childData) {
+  //Does not log?
+  postData = childData;
+  console.log("Return Data Below!");
+  console.log(postData);
+}
+//Chatbot
 class Simpleform extends Component {
   render() {
     return (
@@ -170,9 +174,27 @@ class Simpleform extends Component {
           steps={[
             {
               id: "1",
-              message: "Hello. What is your name?",
+              message: "Hello user, please login!",
+              trigger: "login"
+            },
+            {
+              id: "login",
+              component: <UserRegister parentCall={passToPost}/>,
+              asMessage: true,
+              trigger: "continue"
+            },
+            {
+              id: "continue",
+              options: [
+                { value: "continue", label: "Continue", trigger: "start"}
+              ]
+            },
+            {
+              id: "start",
+              message: "Hello! Let's start by telling me a little bit about yourself! What's your name?",
               trigger: "name",
             },
+            //Get name
             {
               id: "name",
               user: true,
@@ -217,7 +239,7 @@ class Simpleform extends Component {
             {
               id: "diet-message",
               message:
-                "Here are some suggested food groups for {previousValue}," +
+                "Here are some suggested food groups for {previousValue}, " +
                 "please choose one that you're interested in!",
               trigger: "diet",
             },
@@ -359,7 +381,7 @@ class Simpleform extends Component {
             },
             {
               id: "end-message",
-              component: <Post userData={this.state} />,
+              component: <Post userData={this.state} signInData={postData} />,
               asMessage: true,
               //Post data
               end: true,

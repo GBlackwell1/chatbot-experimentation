@@ -1,5 +1,6 @@
-import axios from 'axios';
 import React, { Component } from 'react';
+import { app, database } from './firebaseConfig';
+import { collection, addDoc } from 'firebase/firestore';
 
 class Post extends Component {
     constructor(props) {
@@ -16,12 +17,16 @@ class Post extends Component {
             name: this.state.name.value,
             gender: this.state.gender.value,
             weight: this.state.weight.value,
-            diet: this.state.diet.value
+            diet: this.state.diet.value,
         };
-        
-        axios.post('/api', userObject) //Post object to api
-             .then(res => {console.log(res.status)}) //Then log axios response status to console
-             .catch(function(error) {console.log(error)}); //Then catch any errors and log to console
+        const dbInstance = collection(database, 'users');
+        addDoc(dbInstance, userObject)
+        .then(() => {
+            alert('Data Sent')
+        })
+        .catch(err => {
+            alert(err.message)
+        });
     };
     render() {
         return (

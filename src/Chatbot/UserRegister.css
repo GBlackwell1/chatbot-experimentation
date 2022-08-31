@@ -1,0 +1,8 @@
+.user-register input{
+    font-family:"Trebuchet MS";
+    width: 140px; 
+    border-color: black;
+}
+.user-register button{
+    font-family:"Trebuchet MS";
+}
